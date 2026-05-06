@@ -58,9 +58,30 @@ Sau khi hoàn thành lab này, học viên có thể:
 - Token length analysis → set `max_seq_length = p95` (round up to power of 2)
 - Split: **90% train, 10% eval** (random seed = 42)
 
-**Có thể dùng**:
-- Dataset có sẵn: `5CD-AI/Vietnamese-alpaca-gpt4-gg-translated` từ HuggingFace
-- Hoặc dataset tự tạo (khuyến khích — mang giá trị thực tế hơn cho domain bạn quan tâm)
+**Có thể dùng** (🎨 **Free style — pick whatever excites you**):
+
+#### Sample datasets theo domain (chỉ là gợi ý, bạn có thể dùng bất kỳ):
+
+| Domain | Sample Dataset HuggingFace |
+|--------|---------------------------|
+| Vietnamese general | `5CD-AI/Vietnamese-alpaca-gpt4-gg-translated` |
+| English general | `tatsu-lab/alpaca`, `HuggingFaceH4/ultrachat_200k` |
+| Coding (Python) | `iamtarun/python_code_instructions_18k_alpaca` |
+| Coding (SQL) | `b-mc2/sql-create-context` |
+| Medical | `medalpaca/medical_meadow_medqa` |
+| Legal | `joelniklaus/legal_case_document_summarization` |
+| Finance | `gbharti/finance-alpaca` |
+| Recipe / cooking | `recipe_nlg` |
+| Story / fiction | `roneneldan/TinyStories` |
+| Vietnamese student feedback | `uitnlp/vietnamese_students_feedback` |
+
+#### Hoặc tự tạo dataset cho domain bạn quan tâm:
+
+- **Tiếng Việt vertical**: tax advisor, medical advice (Vinmec articles), recipes Việt Nam, lịch sử VN, e-commerce reviews
+- **Style/format**: JSON structured output, Markdown formatting, specific tone (Gen-Z / formal), company-specific support agent
+- **Niche knowledge**: VinUniversity FAQ bot, course tutor cho 1 môn, technical doc Q&A
+
+> 💡 **Khuyến khích**: dataset tự tạo cho domain bạn passionate → kết quả ấn tượng hơn nhiều so với dùng generic dataset. 200 high-quality custom samples > 2000 noisy generic samples.
 
 ### Step 2 — Configure LoRA (Baseline r=16)
 
@@ -73,7 +94,25 @@ lora_dropout = 0
 gradient_checkpointing = True
 ```
 
-**Model**: `unsloth/Qwen2.5-7B-bnb-4bit` (BigGPU) hoặc `unsloth/Qwen2.5-3B-bnb-4bit` (T4)
+**Model**: 🎨 **Free style — chọn 1 trong 16+ options** (xem `Day21_README.md` cho full list)
+
+#### Recommended defaults theo GPU:
+
+| GPU bạn có | Recommend | Backup options |
+|------------|-----------|----------------|
+| T4 (16 GB Free Colab) | `Llama-3.2-3B-Instruct` | `gemma-2-2b-it`, `Phi-3.5-mini`, `Qwen2.5-3B` |
+| L4 (24 GB Pro) | `Llama-3.1-8B-Instruct` | `Mistral-7B-v0.3`, `gemma-2-9b-it`, `Qwen2.5-7B` |
+| A100 (40 GB) | `Llama-3.1-8B` hoặc `gemma-2-9b` | `Mistral-Nemo-12B` |
+| A100 80 GB / H100 | `Llama-3.3-70B-Instruct` | bất kỳ smaller model |
+
+#### Theo use case:
+- **Generic instruction-following** → Llama 3.2/3.1, Gemma 2, Mistral
+- **Tiếng Việt / multilingual** → Qwen2.5, Gemma 2, Llama 3.2
+- **Coding tasks** → DeepSeek-Coder, CodeLlama
+- **Reasoning-heavy** → Phi-3.5-mini, Llama 3.1
+- **Tiny demo / siêu nhanh** → TinyLlama 1.1B, SmolLM2 1.7B
+
+> ⚠️ **Quan trọng**: ghi rõ model bạn chọn vào REPORT.md. Khác model → khác baseline perplexity → so sánh **giữa các bạn** không có ý nghĩa, nhưng so sánh r=8 vs r=16 vs r=64 trên **cùng model** thì ý nghĩa.
 
 ### Step 3 — Train Baseline với TRL SFTTrainer
 
@@ -265,7 +304,7 @@ Dưới đây là template các bạn có thể copy + điền:
 **Ngày nộp**: <YYYY-MM-DD>
 
 ## 1. Setup
-- **Base model**: unsloth/Qwen2.5-7B-bnb-4bit
+- **Base model**: <điền model bạn chọn — vd: `unsloth/Llama-3.2-3B-Instruct-bnb-4bit`>
 - **Dataset**: 5CD-AI/Vietnamese-alpaca-gpt4-gg-translated, 300 samples (270 train + 30 eval)
 - **max_seq_length**: 1024 (p95 = 712, rounded up)
 - **GPU**: Tesla T4, 14.5 GB VRAM
