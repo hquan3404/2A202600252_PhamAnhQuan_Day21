@@ -216,3 +216,15 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# === Lab 21 Specific ===
+# Ignore large model weights and adapters
+*.safetensors
+*.bin
+*.pth
+*.pt
+
+# Ignore training checkpoints
+checkpoint-*/
+**/checkpoint-*/
+
